@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para tí ❤️</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 1rem;
+      transition: background 0.8s ease;
+    }
+
+    .screen {
+      max-width: 420px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* VIRUS */
+    body.virus { background: #8b0000; color: #fff; }
+    body.virus .screen {
+      background: #b00000;
+      animation: shake 0.4s infinite alternate;
+    }
+    @keyframes shake {
+      from { transform: translateX(-2px); }
+      to { transform: translateX(2px); }
+    }
+
+    .progress {
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      animation: load 5s linear forwards;
+    }
+    @keyframes load { to { width: 100%; } }
+
+    /* ROMANCE */
+    body.romance {
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: #333;
+    }
+
+    h1 { font-size: 1.6rem; margin-bottom: 1rem; }
+    p { font-size: 1rem; margin-bottom: 1rem; line-height: 1.5; }
+
+    /* SLIDESHOW */
+    .slideshow {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-bottom: 0.8rem;
+    }
+    .slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.1);
+      transition: opacity 1s ease, transform 2s ease;
+    }
+    .slideshow img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .caption { min-height: 3em; }
+
+    /* COUNTDOWN */
+    .countdown {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #ff4d6d;
+      animation: pop 1s ease;
+    }
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* BOTONES */
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      margin-top: 1rem;
+    }
+    button {
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .yes { background: #ff4d6d; color: #fff; }
+    .no { background: #ddd; position: absolute; }
+
+    .gif { width: 120px; margin: 1rem auto; }
+    .heart { font-size: 3rem; margin-bottom: 1rem; }
+  </style>
+</head>
+
+<body class="virus">
+  <div class="screen" id="screen">
+    <h1>⚠️ ALERTA DE SEGURIDAD</h1>
+    <p>Se detectó software malicioso.</p>
+    <p>Todas sus cuentas bancarias serán hackeadas.</p>
+    <div class="progress"><div class="bar"></div></div>
+  </div>
+
+  <audio id="music" src="musica.mp3" loop></audio>
+
+  <script>
+    const screen = document.getElementById('screen');
+    const music = document.getElementById('music');
+
+    document.addEventListener('click', () => {
+      if (music.paused) music.play();
+    }, { once: true });
+
+    setTimeout(showJoke, 5000);
+
+    function showJoke() {
+      document.body.className = 'romance';
+      screen.innerHTML = `
+        <div class="heart"></div>
+        <h1>Tranquila…</h1>
+        <p>No es un virus<br>Era una broma 😅 <br> Pero si quieres, no es broma 😂 <br> <br>Bueno, ya que estas aquí</p>
+      `;
+      //setTimeout(showSlideshow, 3500);
+      setTimeout(startCountdown,  5000);
+    }
+// ⏱ Cuenta regresiva dramática
+    function startCountdown() {
+      let count = 5;
+
+      const tick = () => {
+        if (navigator.vibrate) navigator.vibrate(120);
+        screen.innerHTML = `<div class="countdown">${count}</div>`;
+        count--;
+
+        if (count >= 0) {
+          setTimeout(tick, 1000);
+        } else {
+          showSlideshow();
+          //showQuestion();
+        }
+      };
+
+      tick();
+    }
+    function showSlideshow() {
+      screen.innerHTML = `
+        <div class="slideshow">
+          <img src="foto1.jpg" class="active">
+          <img src="foto2.jpg">
+        </div>
+        <p class="caption" id="caption"></p>
+      `;
+
+      const images = document.querySelectorAll('.slideshow img');
+      const caption = document.getElementById('caption');
+      const texts = [
+        'Todo empezó con una sonrisa 😊',
+        'Después llegaron las risas',
+        'Momentos simples pero únicos',
+        'Y sin darme cuenta… me enamoré ❤️'
+      ];
+
+      let i = 0;
+      caption.textContent = texts[0];
+
+      const interval = setInterval(() => {
+        images[i].classList.remove('active');
+        i++;
+        if (i === images.length) {
+          clearInterval(interval);
+          setTimeout(showQuestion, 3000);
+          return;
+        }
+        images[i].classList.add('active');
+        caption.textContent = texts[i];
+      }, 4000);
+    }
+
+    function showQuestion() {
+      screen.innerHTML = `
+        <div class="heart">❤️</div>
+        <p>¿Me dejas ser tu Dios Griego? <br>🤭</p>
+        <h1>¿Aceptas ser mi novia?</h1>
+        <div class="buttons">
+          <button class="yes" onclick="accept()">Sí 💖</button>
+          <button class="no" id="no">No 😅</button>
+        </div>
+      `;
+
+      const noBtn = document.getElementById('no');
+      noBtn.addEventListener('mouseover', moveNo);
+      noBtn.addEventListener('touchstart', moveNo);
+
+      function moveNo() {
+        noBtn.style.left = Math.random() * 200 + 'px';
+        noBtn.style.top = Math.random() * 100 + 'px';
+      }
+    }
+
+    function accept() {
+      screen.innerHTML = `
+        <img class="gif" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+        <h1>¡¡SÍÍÍ!! 😍🎉</h1>
+        <p>Seguramente vamos a ser un gran equipo ❤️</p>
+      `;
+
+      setTimeout(() => {
+        const phone = '593983028781'; // ← CAMBIAR
+        const msg = encodeURIComponent('Sí, acepto ser tu novia ❤️');
+        window.location.href = `https://wa.me/${phone}?text=${msg}`;
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
